@@ -7,13 +7,62 @@ Download and place named_scope.php file in app/models/behaviors folder of your C
 
 To make use of all features of this behavior yu must add the following to your app_model:
 
-function __get($name) {
-    if (isset($this->actsAs) && isset($this->actsAs['NamedScope']) && isset($this->actsAs['NamedScope'][$name])) {
-        $this->cacheScope($name);
-        return $this;
-    } else {
-        return parent::__get($name);
+    function __get($name) {
+        if (isset($this->actsAs) && isset($this->actsAs['NamedScope']) && isset($this->actsAs['NamedScope'][$name])) {
+            $this->cacheScope($name);
+            return $this;
+        } else {
+            return parent::__get($name);
+        }
     }
-}
 
 This enables you to make calls like $this->User->enabled->find('all').
+
+==Usage
+
+Example of User model:
+
+    $actsAs = array(
+        'NamedScope' => array(
+            'activated' => array('User.activated' => 1),
+            'online' => array('date_add(User.last_activity, interval 5 minute) > now()')
+        )
+    );
+
+Then in your controller (or anywhere else) you can do:
+
+    $this->User->find('all', array('scopes' => array('activated')));
+
+which is an equivalent to:
+
+    $this->User->find('all', array('conditions' => array('User.activated' => 1)));
+
+You can use many scopes at once and mix them with usually defined conditions:
+
+    $this->User->find('all', array('condtions' => array('User.admin' => 1), 'scopes' => array('activated', 'online')))
+
+If you have associated models (hasOne or belongsTo) and they have named scopes defined you can use them all in one find query:
+$this->User->find('all', array('scopes' => ('activated', 'Group.admins'))) 
+// assuming that User belongsTo Group and Group model has 'admins' named scope defined.
+
+Scopes works also with pagination (in your controller):
+
+    $paginate = array(
+        'User' => array(
+            'order' => 'created ASC',
+            'limit' => 20,
+            'scopes' => array('online', 'activated')
+        )
+    );
+
+== Shorthands
+
+If you've added the __get function to your app_model, you can also use the following short-hands for your named scopes:
+
+    $this->User->activated->find('all');
+
+You can also chain these calls, for example:
+
+    $this->User->activated->online->find('all');
+
+Jusr remmeber that the shorthands you efine take precedence of other things, so take care you pick a distinguishable name for your scope.
