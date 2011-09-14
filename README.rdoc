@@ -5,3 +5,15 @@ This is a behavior for CakePHP that allows use of named scopes with model's find
 
 Download and place named_scope.php file in app/models/behaviors folder of your CakePHP application.
 
+To make use of all features of this behavior yu must add the following to your app_model:
+
+function __get($name) {
+    if (isset($this->actsAs) && isset($this->actsAs['NamedScope']) && isset($this->actsAs['NamedScope'][$name])) {
+        $this->cacheScope($name);
+        return $this;
+    } else {
+        return parent::__get($name);
+    }
+}
+
+This enables you to make calls like $this->User->enabled->find('all').
