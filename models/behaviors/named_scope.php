@@ -1,4 +1,6 @@
 <?php
+// basic code taken and modified/fixed from https://github.com/netguru/namedscopebehavior
+
 class NamedScopeBehavior extends ModelBehavior {
     var $cachedScopes = array();
 
