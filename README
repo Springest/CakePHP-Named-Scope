@@ -1,7 +1,0 @@
-=Named Scope Behavior for CakePHP 1.3
-This is a behavior for CakePHP that allows use of named scopes with model's find() method. What it does it translating defined scopes to conditions before extecuting find query.
-
-==Installation
-
-Download and place named_scope.php file in app/models/behaviors folder of your CakePHP application.
-
