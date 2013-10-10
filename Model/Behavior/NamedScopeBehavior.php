@@ -6,11 +6,11 @@ class NamedScopeBehavior extends ModelBehavior {
 
     static $__settings = array();
 
-    function setup(&$model, $settings = array()) {
-        self::$__settings[$model->name] = $settings;
+    function setup(Model $model, $config = array()) {
+        self::$__settings[$model->name] = $config;
     }
 
-    function beforeFind(&$model, $queryData) {
+    function beforeFind(Model $model, $queryData) {
         $scopes = $this->cachedScopes;
         // passed as scopes
         if (!empty($queryData['scopes'])) {
@@ -33,11 +33,11 @@ class NamedScopeBehavior extends ModelBehavior {
         return $queryData;
     }
 
-    function afterFind(&$model, $results, $primary) {
+    function afterFind(Model $model, $results, $primary=false) {
         $this->cachedScopes = array();
     }
 
-    function cacheScope(&$model, $name) {
+    function cacheScope(Model $model, $name) {
         $this->cachedScopes[] = $name;
     }
 
